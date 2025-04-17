@@ -1,15 +1,18 @@
-package com.gdomingues.androidapp.data
+package com.gdomingues.androidapp.data.di
 
+import com.gdomingues.androidapp.data.AuthInterceptor
+import com.gdomingues.androidapp.data.MoviesApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -44,4 +47,8 @@ class DataModule {
     fun provideMoviesApi(retrofit: Retrofit): MoviesApi {
         return retrofit.create(MoviesApi::class.java)
     }
+
+    @Provides
+    @IODispatcherQualifier
+    fun provideIODispatcher(): CoroutineDispatcher = Dispatchers.IO
 }
