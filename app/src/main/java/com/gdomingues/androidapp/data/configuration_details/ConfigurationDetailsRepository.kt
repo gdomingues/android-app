@@ -5,8 +5,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Optional
+import javax.inject.Inject
 
-class ConfigurationDetailsRepository(
+class ConfigurationDetailsRepository @Inject constructor(
     private val configurationDetailsDataSource: ConfigurationDetailsDataSource,
     private val externalScope: CoroutineScope
 ) {
