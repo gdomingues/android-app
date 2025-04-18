@@ -16,7 +16,7 @@ fun TrendingMovieResponse.toDomain(): TrendingMovie {
         originalTitle = originalTitle.orEmpty(),
         overview = overview,
         posterPath = posterPath.orEmpty(),
-        backdropPath = backdropPath,
+        backdropPath = backdropPath.orEmpty(),
         genreIds = genreIds,
         popularity = popularity,
         releaseDate = releaseDate.orEmpty(),

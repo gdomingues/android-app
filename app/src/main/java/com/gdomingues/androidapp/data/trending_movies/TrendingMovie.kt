@@ -6,7 +6,7 @@ data class TrendingMovie(
     val originalTitle: String,
     val overview: String,
     val posterPath: String,
-    val backdropPath: String?,
+    val backdropPath: String,
     val genreIds: List<Int>,
     val popularity: Double,
     val releaseDate: String,
