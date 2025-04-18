@@ -1,27 +1,19 @@
 package com.gdomingues.androidapp.data.configuration_details
 
 import com.gdomingues.androidapp.data.MoviesApi
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class ConfigurationDetailsDataSourceTest {
 
     private val moviesApi: MoviesApi = mock(MoviesApi::class.java)
     private val testDispatcher = StandardTestDispatcher()
 
-    private lateinit var dataSource: ConfigurationDetailsDataSource
-
-    @Before
-    fun setUp() {
-        dataSource = ConfigurationDetailsDataSource(moviesApi, testDispatcher)
-    }
+    private val dataSource = ConfigurationDetailsDataSource(moviesApi, testDispatcher)
 
     @Test
     fun `getConfigurationDetails returns mapped domain model`() = runTest(testDispatcher) {
@@ -42,7 +34,7 @@ class ConfigurationDetailsDataSourceTest {
         val expectedDomain = apiResponse.toDomain()
 
         // When
-        whenever(moviesApi.getConfiguration()).thenReturn(apiResponse)
+        whenever(moviesApi.getConfigurationDetails()).thenReturn(apiResponse)
 
         // Then
         val result = dataSource.getConfigurationDetails()

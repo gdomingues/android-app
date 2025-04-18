@@ -1,4 +1,4 @@
-package com.gdomingues.androidapp.data.configuration_details
+package com.gdomingues.androidapp.data.trending_movies
 
 import com.gdomingues.androidapp.data.MoviesApi
 import com.gdomingues.androidapp.data.di.IODispatcherQualifier
@@ -6,15 +6,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class ConfigurationDetailsDataSource @Inject constructor(
+class TrendingMoviesDatasource @Inject constructor(
     private val moviesApi: MoviesApi,
     @IODispatcherQualifier private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    suspend fun getConfigurationDetails(): ConfigurationDetails {
+    suspend fun getTrendingMovies(): TrendingMovies {
         return withContext(ioDispatcher) {
-            val configurationDetailsResponse = moviesApi.getConfigurationDetails()
-            configurationDetailsResponse.toDomain()
+            val trendingMoviesResponse = moviesApi.getTrendingMovies()
+            trendingMoviesResponse.toDomain()
         }
     }
 }
