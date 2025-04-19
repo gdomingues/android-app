@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TrendingMoviesScreenTest {
@@ -80,22 +81,24 @@ class TrendingMoviesScreenTest {
 
     @Test
     fun triggersMovieClickWhenCardIsClicked() {
-        var clickedId: Int? = null
+        var clickedMovie: TrendingMovieUiModel? = null
+        val movies = sampleMovies.take(1)
+        val movieDisplayed = movies.single()
 
         composeTestRule.setContent {
             TrendingMoviesScreen(
                 uiState = TrendingMoviesUiState.Success(
-                    sampleMovies.take(1),
+                    movies,
                     isLoadingMore = false
                 ),
-                onMovieClick = { clickedId = it },
+                onMovieClick = { clickedMovie = movieDisplayed },
                 onRetry = {},
                 onObserverListScroll = {}
             )
         }
 
         composeTestRule.onNodeWithText("Movie 1").performClick()
-        assertTrue(clickedId == 1)
+        assertEquals(clickedMovie, movieDisplayed)
     }
 
     @Test

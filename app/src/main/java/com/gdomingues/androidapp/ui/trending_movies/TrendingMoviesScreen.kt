@@ -38,7 +38,7 @@ import coil.request.ImageRequest
 @Composable
 fun TrendingMoviesScreen(
     uiState: TrendingMoviesUiState,
-    onMovieClick: (Int) -> Unit,
+    onMovieClick: (TrendingMovieUiModel) -> Unit,
     onRetry: () -> Unit,
     onObserverListScroll: (LazyListState) -> Unit
 ) {
@@ -93,7 +93,7 @@ private fun ErrorView(
 @Composable
 private fun TrendingMoviesList(
     uiState: TrendingMoviesUiState.Success,
-    onMovieClick: (Int) -> Unit,
+    onMovieClick: (TrendingMovieUiModel) -> Unit,
     onObserverListScroll: (LazyListState) -> Unit,
 ) {
     val listState = rememberLazyListState()
@@ -129,12 +129,12 @@ private fun TrendingMoviesList(
 }
 
 @Composable
-fun TrendingMovieCard(movie: TrendingMovieUiModel, onMovieClick: (Int) -> Unit) {
+fun TrendingMovieCard(movie: TrendingMovieUiModel, onMovieClick: (TrendingMovieUiModel) -> Unit) {
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth()
-            .clickable { onMovieClick(movie.id) },
+            .clickable { onMovieClick(movie) },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
