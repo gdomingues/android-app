@@ -11,26 +11,27 @@ import kotlin.test.assertEquals
 class TrendingMoviesRepositoryTest {
 
     private val datasource: TrendingMoviesDatasource = mock()
+    private val repository = TrendingMoviesRepository(datasource)
     private val testDispatcher = StandardTestDispatcher()
-    private val repository = TrendingMoviesRepository(trendingMoviesDatasource = datasource)
 
     @Test
-    fun `getTrendingMovies returns movies from datasource`() = runTest(testDispatcher) {
+    fun `getTrendingMovies returns data from datasource`() = runTest(testDispatcher) {
         // Given
+        val page = 1
         val expected = TrendingMovies(
-            page = 1,
-            results = listOf(
+            page = page,
+            movies = listOf(
                 TrendingMovie(
                     id = 1,
                     title = "Test Movie",
-                    originalTitle = "Test Original Title",
-                    overview = "This is a test movie",
+                    originalTitle = "Original Title",
+                    overview = "Test overview",
                     posterPath = "/poster.jpg",
                     backdropPath = "/backdrop.jpg",
                     genreIds = listOf(28, 12),
                     popularity = 99.9,
-                    releaseDate = "2025-01-01",
-                    voteAverage = 8.0,
+                    releaseDate = "2024-01-01",
+                    voteAverage = 8.5,
                     voteCount = 1000,
                     isAdult = false,
                     isVideo = false,
@@ -41,13 +42,13 @@ class TrendingMoviesRepositoryTest {
             totalResults = 100
         )
 
-        whenever(datasource.getTrendingMovies()).thenReturn(expected)
+        whenever(datasource.getTrendingMovies(page)).thenReturn(expected)
 
         // When
-        val result = repository.getTrendingMovies()
+        val result = repository.getTrendingMovies(page)
 
         // Then
         assertEquals(expected, result)
-        verify(datasource).getTrendingMovies()
+        verify(datasource).getTrendingMovies(page)
     }
 }

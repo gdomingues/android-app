@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -19,6 +21,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,12 +39,17 @@ import coil.request.ImageRequest
 fun TrendingMoviesScreen(
     uiState: TrendingMoviesUiState,
     onMovieClick: (Int) -> Unit,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onObserverListScroll: (LazyListState) -> Unit
 ) {
     when (uiState) {
         is TrendingMoviesUiState.Loading -> LoadingView()
         is TrendingMoviesUiState.Error -> ErrorView(uiState, onRetry)
-        is TrendingMoviesUiState.Success -> TrendingMoviesList(uiState, onMovieClick)
+        is TrendingMoviesUiState.Success -> TrendingMoviesList(
+            uiState,
+            onMovieClick,
+            onObserverListScroll
+        )
     }
 }
 
@@ -72,7 +80,10 @@ private fun ErrorView(
         ) {
             Text(uiState.message, color = Color.Red, textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = onRetry) {
+            Button(
+                onClick = onRetry,
+                modifier = Modifier.testTag("RetryButton")
+            ) {
                 Text("Retry")
             }
         }
@@ -82,17 +93,37 @@ private fun ErrorView(
 @Composable
 private fun TrendingMoviesList(
     uiState: TrendingMoviesUiState.Success,
-    onMovieClick: (Int) -> Unit
+    onMovieClick: (Int) -> Unit,
+    onObserverListScroll: (LazyListState) -> Unit,
 ) {
+    val listState = rememberLazyListState()
+    LaunchedEffect(Unit) {
+        onObserverListScroll(listState)
+    }
+
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .testTag("TrendingMoviesList"),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(uiState.data) { movie ->
+        items(uiState.movies.size) { index ->
+            val movie = uiState.movies[index]
             TrendingMovieCard(movie, onMovieClick)
+        }
+
+        if (uiState.isLoadingMore) {
+            item {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .wrapContentWidth(Alignment.CenterHorizontally)
+                        .testTag("LoadingMoreProgressIndicator")
+                )
+            }
         }
     }
 }

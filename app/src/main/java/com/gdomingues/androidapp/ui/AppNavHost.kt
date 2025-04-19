@@ -26,7 +26,8 @@ fun AppNavHost() {
                 onMovieClick = { movieId ->
                     navController.navigate("movie_detail/$movieId")
                 },
-                onRetry = viewModel::fetchMovies
+                onRetry = viewModel::fetchMovies,
+                onObserverListScroll = viewModel::observeListScroll,
             )
         }
         composable(

@@ -11,9 +11,9 @@ class TrendingMoviesDatasource @Inject constructor(
     @IODispatcherQualifier private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    suspend fun getTrendingMovies(): TrendingMovies {
+    suspend fun getTrendingMovies(page: Int): TrendingMovies {
         return withContext(ioDispatcher) {
-            val trendingMoviesResponse = moviesApi.getTrendingMovies()
+            val trendingMoviesResponse = moviesApi.getTrendingMovies(page)
             trendingMoviesResponse.toDomain()
         }
     }

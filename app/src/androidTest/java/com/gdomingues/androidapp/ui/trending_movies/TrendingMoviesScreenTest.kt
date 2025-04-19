@@ -1,6 +1,7 @@
 package com.gdomingues.androidapp.ui.trending_movies
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -9,126 +10,125 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.assertTrue
 
 class TrendingMoviesScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val sampleMovies = listOf(
+    private val sampleMovies = (1..20).map {
         TrendingMovieUiModel(
-            id = 1,
-            title = "Movie A",
-            overview = "Overview A",
+            id = it,
+            title = "Movie $it",
+            overview = "Overview $it",
             backdropPath = "https://image.tmdb.org/t/p/original/ce3prrjh9ZehEl5JinNqr4jIeaB.jpg",
-            voteAverage = 7.5
-        ),
-        TrendingMovieUiModel(
-            id = 2,
-            title = "Movie B",
-            overview = "Overview B",
-            backdropPath = "https://image.tmdb.org/t/p/original/ce3prrjh9ZehEl5JinNqr4jIeaB.jpg",
-            voteAverage = 8.3
+            voteAverage = 7.0 + (it % 5)
         )
-    )
+    }
 
     @Test
-    fun showsLoadingIndicatorWhenInLoadingState() {
+    fun showsLoadingIndicatorWhenStateIsLoading() {
         composeTestRule.setContent {
             TrendingMoviesScreen(
                 uiState = TrendingMoviesUiState.Loading,
                 onMovieClick = {},
-                onRetry = {}
+                onRetry = {},
+                onObserverListScroll = {}
             )
         }
 
-        composeTestRule
-            .onNodeWithTag("Loading")
-            .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Loading").assertIsDisplayed()
     }
 
     @Test
-    fun showsMoviesWhenInSuccessState() {
-        composeTestRule.setContent {
-            TrendingMoviesScreen(
-                uiState = TrendingMoviesUiState.Success(sampleMovies),
-                onMovieClick = {},
-                onRetry = {}
-            )
-        }
-
-        sampleMovies.forEach { movie ->
-            composeTestRule
-                .onNodeWithText(movie.title)
-                .assertIsDisplayed()
-        }
-
-        composeTestRule.onNodeWithText("★ 7.5").assertIsDisplayed()
-        composeTestRule.onNodeWithText("★ 8.3").assertIsDisplayed()
-    }
-
-    @Test
-    fun showsErrorAndCallsRetryWhenClicked() {
+    fun showsErrorAndRetryButtonWhenStateIsError() {
         var retried = false
 
         composeTestRule.setContent {
             TrendingMoviesScreen(
-                uiState = TrendingMoviesUiState.Error("Oops! Something went wrong."),
+                uiState = TrendingMoviesUiState.Error("Something went wrong"),
                 onMovieClick = {},
-                onRetry = { retried = true }
+                onRetry = { retried = true },
+                onObserverListScroll = {}
             )
         }
 
-        composeTestRule.onNodeWithText("Oops! Something went wrong.").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Something went wrong").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("RetryButton").assertIsDisplayed().performClick()
 
-        composeTestRule.onNodeWithText("Retry").performClick()
-
-        assert(retried)
+        assertTrue(retried)
     }
 
     @Test
-    fun movieClickTriggersCallback() {
-        var clickedMovieId: Int? = null
-
+    fun showsMovieListWhenStateIsSuccess() {
         composeTestRule.setContent {
             TrendingMoviesScreen(
-                uiState = TrendingMoviesUiState.Success(sampleMovies),
-                onMovieClick = { clickedMovieId = it },
-                onRetry = {}
+                uiState = TrendingMoviesUiState.Success(
+                    sampleMovies.take(5),
+                    isLoadingMore = false
+                ),
+                onMovieClick = {},
+                onRetry = {},
+                onObserverListScroll = {}
             )
         }
 
-        composeTestRule
-            .onNodeWithText("Movie A")
-            .performClick()
-
-        assert(clickedMovieId == 1)
+        composeTestRule.onNodeWithTag("TrendingMoviesList").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Movie 1").assertIsDisplayed()
     }
 
     @Test
-    fun scrollsToLastMovie() {
-        val largeMovieList = (1..20).map {
-            TrendingMovieUiModel(
-                id = it,
-                title = "Movie $it",
-                overview = "Overview $it",
-                backdropPath = "https://image.tmdb.org/t/p/original/ce3prrjh9ZehEl5JinNqr4jIeaB.jpg",
-                voteAverage = 6.0 + (it % 5)
-            )
-        }
+    fun triggersMovieClickWhenCardIsClicked() {
+        var clickedId: Int? = null
 
         composeTestRule.setContent {
             TrendingMoviesScreen(
-                uiState = TrendingMoviesUiState.Success(largeMovieList),
-                onMovieClick = {},
-                onRetry = {}
+                uiState = TrendingMoviesUiState.Success(
+                    sampleMovies.take(1),
+                    isLoadingMore = false
+                ),
+                onMovieClick = { clickedId = it },
+                onRetry = {},
+                onObserverListScroll = {}
             )
         }
 
-        composeTestRule
-            .onNodeWithTag("TrendingMoviesList")
+        composeTestRule.onNodeWithText("Movie 1").performClick()
+        assertTrue(clickedId == 1)
+    }
+
+    @Test
+    fun scrollsToLastMovieInLargeList() {
+        composeTestRule.setContent {
+            TrendingMoviesScreen(
+                uiState = TrendingMoviesUiState.Success(sampleMovies, isLoadingMore = false),
+                onMovieClick = {},
+                onRetry = {},
+                onObserverListScroll = {}
+            )
+        }
+
+        composeTestRule.onNodeWithTag("TrendingMoviesList")
             .performScrollToNode(hasText("Movie 20"))
 
         composeTestRule.onNodeWithText("Movie 20").assertIsDisplayed()
+    }
+
+    @Test
+    fun showsLoadingMoreIndicatorWhenIsLoadingMoreIsTrue() {
+        composeTestRule.setContent {
+            TrendingMoviesScreen(
+                uiState = TrendingMoviesUiState.Success(sampleMovies.take(5), isLoadingMore = true),
+                onMovieClick = {},
+                onRetry = {},
+                onObserverListScroll = {}
+            )
+        }
+
+        composeTestRule.onNodeWithTag("TrendingMoviesList")
+            .performScrollToNode(hasTestTag("LoadingMoreProgressIndicator"))
+
+        composeTestRule.onNodeWithTag("LoadingMoreProgressIndicator").assertIsDisplayed()
     }
 }

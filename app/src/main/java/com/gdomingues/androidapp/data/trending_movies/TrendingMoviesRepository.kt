@@ -5,7 +5,7 @@ import javax.inject.Inject
 class TrendingMoviesRepository @Inject constructor(
     private val trendingMoviesDatasource: TrendingMoviesDatasource
 ) {
-    suspend fun getTrendingMovies(): TrendingMovies {
-        return trendingMoviesDatasource.getTrendingMovies()
+    suspend fun getTrendingMovies(page: Int): TrendingMovies {
+        return trendingMoviesDatasource.getTrendingMovies(page)
     }
 }

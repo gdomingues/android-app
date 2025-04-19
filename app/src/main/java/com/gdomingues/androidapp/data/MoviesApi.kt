@@ -3,6 +3,7 @@ package com.gdomingues.androidapp.data
 import com.gdomingues.androidapp.data.configuration_details.ConfigurationDetailsResponse
 import com.gdomingues.androidapp.data.trending_movies.TrendingMoviesResponse
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface MoviesApi {
 
@@ -20,5 +21,5 @@ interface MoviesApi {
      * https://developer.themoviedb.org/reference/trending-movies
      */
     @GET("trending/movie/day")
-    suspend fun getTrendingMovies(): TrendingMoviesResponse
+    suspend fun getTrendingMovies(@Query("page") page: Int): TrendingMoviesResponse
 }

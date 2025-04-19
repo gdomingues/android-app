@@ -5,7 +5,7 @@ fun TrendingMoviesResponse.toDomain(): TrendingMovies {
         page = page,
         totalPages = totalPages,
         totalResults = totalResults,
-        results = results.map { it.toDomain() }
+        movies = results.map { it.toDomain() }
     )
 }
 

@@ -74,6 +74,7 @@ dependencies {
     androidTestImplementation(libs.androidx.rules)
     androidTestImplementation(libs.androidx.runner)
     androidTestImplementation(libs.androidx.orchestrator)
+    androidTestImplementation(kotlin("test"))
 
     debugImplementation(libs.core)
     debugImplementation(libs.ui.test.manifest)

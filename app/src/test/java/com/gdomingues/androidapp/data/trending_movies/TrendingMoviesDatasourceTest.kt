@@ -13,43 +13,73 @@ class TrendingMoviesDatasourceTest {
 
     private val moviesApi: MoviesApi = mock()
     private val testDispatcher = StandardTestDispatcher()
-    private val datasource = TrendingMoviesDatasource(moviesApi, testDispatcher)
+    private val datasource = TrendingMoviesDatasource(
+        moviesApi = moviesApi,
+        ioDispatcher = testDispatcher
+    )
 
     @Test
-    fun `getTrendingMovies returns mapped domain result`() = runTest(testDispatcher) {
+    fun `getTrendingMovies returns mapped domain model`() = runTest(testDispatcher) {
         // Given
+        val page = 1
+        val trendingMovieResponses = listOf(
+            TrendingMovieResponse(
+                adult = false,
+                backdropPath = "/path.jpg",
+                id = 1,
+                title = "Movie One",
+                originalLanguage = "en",
+                originalTitle = "Movie One Original",
+                overview = "Overview for Movie One",
+                posterPath = "/poster.jpg",
+                mediaType = "movie",
+                genreIds = listOf(28, 12),
+                popularity = 80.5,
+                releaseDate = "2024-10-01",
+                video = false,
+                voteAverage = 7.9,
+                voteCount = 1200
+            )
+        )
+
         val apiResponse = TrendingMoviesResponse(
             page = 1,
-            results = listOf(
-                TrendingMovieResponse(
-                    adult = false,
-                    backdropPath = "/path.jpg",
-                    id = 42,
-                    title = "Test Movie",
-                    originalLanguage = "en",
-                    originalTitle = "Test Movie Original",
-                    overview = "A test overview",
+            results = trendingMovieResponses,
+            totalPages = 5,
+            totalResults = 100
+        )
+
+        val expected = TrendingMovies(
+            page = 1,
+            movies = listOf(
+                TrendingMovie(
+                    id = 1,
+                    title = "Movie One",
+                    originalTitle = "Movie One Original",
+                    overview = "Overview for Movie One",
                     posterPath = "/poster.jpg",
-                    mediaType = "movie",
+                    backdropPath = "/path.jpg",
                     genreIds = listOf(28, 12),
-                    popularity = 87.5,
-                    releaseDate = "2025-01-01",
-                    video = false,
-                    voteAverage = 7.8,
-                    voteCount = 999
+                    popularity = 80.5,
+                    releaseDate = "2024-10-01",
+                    voteAverage = 7.9,
+                    voteCount = 1200,
+                    isAdult = false,
+                    isVideo = false,
+                    mediaType = "movie"
                 )
             ),
             totalPages = 5,
-            totalResults = 50
+            totalResults = 100
         )
 
-        whenever(moviesApi.getTrendingMovies()).thenReturn(apiResponse)
+        whenever(moviesApi.getTrendingMovies(page)).thenReturn(apiResponse)
 
         // When
-        val result = datasource.getTrendingMovies()
+        val result = datasource.getTrendingMovies(page)
 
         // Then
-        assertEquals(apiResponse.toDomain(), result)
-        verify(moviesApi).getTrendingMovies()
+        assertEquals(expected, result)
+        verify(moviesApi).getTrendingMovies(page)
     }
 }
