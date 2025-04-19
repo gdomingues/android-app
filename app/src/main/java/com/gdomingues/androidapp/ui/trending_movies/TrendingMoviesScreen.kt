@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,8 +21,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -34,47 +39,64 @@ fun TrendingMoviesScreen(
     onRetry: () -> Unit
 ) {
     when (uiState) {
-        is TrendingMoviesUiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
+        is TrendingMoviesUiState.Loading -> LoadingView()
+        is TrendingMoviesUiState.Error -> ErrorView(uiState, onRetry)
+        is TrendingMoviesUiState.Success -> TrendingMoviesList(uiState, onMovieClick)
+    }
+}
 
-        is TrendingMoviesUiState.Success -> {
-            LazyColumn {
-                items(uiState.data) { movie ->
-                    TrendingMovieItem(movie, onMovieClick)
-                }
-            }
-        }
+@Composable
+private fun LoadingView(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .testTag("Loading"),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
 
-        is TrendingMoviesUiState.Error -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = uiState.message,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = onRetry) {
-                    Text("Retry")
-                }
+@Composable
+private fun ErrorView(
+    uiState: TrendingMoviesUiState.Error,
+    onRetry: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(uiState.message, color = Color.Red, textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = onRetry) {
+                Text("Retry")
             }
         }
     }
 }
 
 @Composable
-fun TrendingMovieItem(movie: TrendingMovieUiModel, onMovieClick: (Int) -> Unit) {
+private fun TrendingMoviesList(
+    uiState: TrendingMoviesUiState.Success,
+    onMovieClick: (Int) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(uiState.data) { movie ->
+            TrendingMovieCard(movie, onMovieClick)
+        }
+    }
+}
+
+@Composable
+fun TrendingMovieCard(movie: TrendingMovieUiModel, onMovieClick: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -94,18 +116,17 @@ fun TrendingMovieItem(movie: TrendingMovieUiModel, onMovieClick: (Int) -> Unit) 
                     .height(180.dp),
                 contentScale = ContentScale.Crop
             )
-
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = movie.title,
                     style = MaterialTheme.typography.titleMedium,
+                    overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    fontWeight = FontWeight.Bold,
                 )
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Rating: ${movie.voteAverage}",
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "★ ${movie.voteAverage}",
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }
