@@ -25,18 +25,10 @@ class TrendingMoviesRepositoryTest {
                 TrendingMovie(
                     id = 1,
                     title = "Test Movie",
-                    originalTitle = "Original Title",
                     overview = "Test overview",
-                    posterPath = "/poster.jpg",
                     backdropPath = "/backdrop.jpg",
-                    genreIds = listOf(28, 12),
-                    popularity = 99.9,
                     releaseDate = LocalDate.of(2024, 1, 1),
-                    voteAverage = 8.5,
-                    voteCount = 1000,
-                    isAdult = false,
-                    isVideo = false,
-                    mediaType = "movie"
+                    voteAverage = 8.5
                 )
             ),
             totalPages = 10,

@@ -57,18 +57,10 @@ class GetTrendingMoviesUseCaseTest {
         val movie = TrendingMovie(
             id = 1,
             title = "Movie Title",
-            originalTitle = "Movie Title Original",
             overview = "Overview",
-            posterPath = "/poster.jpg",
             backdropPath = "/backdrop.jpg",
-            genreIds = listOf(28),
-            popularity = 99.9,
             releaseDate = LocalDate.of(2024, 1, 1),
-            voteAverage = 8.7,
-            voteCount = 1000,
-            isAdult = false,
-            isVideo = false,
-            mediaType = "movie"
+            voteAverage = 8.7
         )
 
         val trendingMovies = TrendingMovies(

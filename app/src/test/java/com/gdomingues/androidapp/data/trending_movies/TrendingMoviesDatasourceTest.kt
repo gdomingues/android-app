@@ -56,18 +56,10 @@ class TrendingMoviesDatasourceTest {
                 TrendingMovie(
                     id = 1,
                     title = "Movie One",
-                    originalTitle = "Movie One Original",
                     overview = "Overview for Movie One",
-                    posterPath = "/poster.jpg",
                     backdropPath = "/path.jpg",
-                    genreIds = listOf(28, 12),
-                    popularity = 80.5,
                     releaseDate = LocalDate.of(2024, 10, 1),
-                    voteAverage = 7.9,
-                    voteCount = 1200,
-                    isAdult = false,
-                    isVideo = false,
-                    mediaType = "movie"
+                    voteAverage = 7.9
                 )
             ),
             totalPages = 5,
