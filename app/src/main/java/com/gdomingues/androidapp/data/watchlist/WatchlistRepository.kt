@@ -10,11 +10,13 @@ class WatchlistRepository @Inject constructor(private val dao: WatchlistDao) {
     fun getWatchlist(): Flow<List<TrendingMovie>> =
         dao.getWatchlist().map { list -> list.map { it.toDomainModel() } }
 
-    suspend fun toggleWatchlist(movie: TrendingMovie) {
+    suspend fun toggleWatchlist(movie: TrendingMovie): Boolean {
         if (dao.isInWatchlist(movie.id)) {
             dao.removeFromWatchlist(movie.toEntity())
+            return false
         } else {
             dao.addToWatchlist(movie.toEntity())
+            return true
         }
     }
 

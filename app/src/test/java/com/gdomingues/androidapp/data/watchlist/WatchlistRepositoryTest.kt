@@ -54,11 +54,11 @@ class WatchlistRepositoryTest {
     @Test
     fun `movie is added to and removed from watchlist`() = runBlocking {
         // Add
-        repository.toggleWatchlist(testMovie)
+        assertTrue(repository.toggleWatchlist(testMovie))
         assertTrue(repository.isInWatchlist(testMovie.id))
 
         // Remove
-        repository.toggleWatchlist(testMovie)
+        assertFalse(repository.toggleWatchlist(testMovie))
         assertFalse(repository.isInWatchlist(testMovie.id))
     }
 
