@@ -2,7 +2,6 @@ package com.gdomingues.androidapp.ui.movie_detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gdomingues.androidapp.data.trending_movies.TrendingMovie
 import com.gdomingues.androidapp.data.watchlist.WatchlistRepository
 import com.gdomingues.androidapp.domain.GetWatchlistUseCase
 import com.gdomingues.androidapp.domain.ToggleWatchlistUseCase
@@ -20,7 +19,7 @@ class WatchlistViewModel @Inject constructor(
     private val repository: WatchlistRepository
 ) : ViewModel() {
 
-    val watchlist: StateFlow<List<TrendingMovie>> = getWatchlist()
+    val watchlist: StateFlow<List<TrendingMovieUiModel>> = getWatchlist()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     suspend fun isInWatchlist(movieId: Int): Boolean {

@@ -13,9 +13,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.gdomingues.androidapp.ui.movie_detail.MovieDetailScreen
+import com.gdomingues.androidapp.ui.movie_detail.WatchlistViewModel
 import com.gdomingues.androidapp.ui.selected_movie.SelectedMovieViewModel
 import com.gdomingues.androidapp.ui.trending_movies.TrendingMoviesScreen
 import com.gdomingues.androidapp.ui.trending_movies.TrendingMoviesViewModel
+import com.gdomingues.androidapp.ui.watchlist.WatchlistScreen
 
 @Composable
 fun AppNavHost() {
@@ -83,8 +85,22 @@ fun AppNavHost() {
                 )
             }
 
-            composable(BottomNavItem.Watchlist.route) {
-                /* WatchlistScreen() */
+            composable(BottomNavItem.Watchlist.route) { navBackStackEntry ->
+                val parentEntry = remember(navBackStackEntry) {
+                    navController.getBackStackEntry("root")
+                }
+
+                val viewModel: WatchlistViewModel = hiltViewModel()
+                val movies by viewModel.watchlist.collectAsState()
+                val sharedViewModel: SelectedMovieViewModel = hiltViewModel(parentEntry)
+
+                WatchlistScreen(
+                    movies = movies,
+                    onMovieClick = { movie ->
+                        sharedViewModel.selectMovie(movie)
+                        navController.navigate("movie_detail")
+                    }
+                )
             }
         }
     }

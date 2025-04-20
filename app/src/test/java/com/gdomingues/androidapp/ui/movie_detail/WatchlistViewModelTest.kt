@@ -1,7 +1,6 @@
 package com.gdomingues.androidapp.ui.movie_detail
 
 import app.cash.turbine.test
-import com.gdomingues.androidapp.data.trending_movies.TrendingMovie
 import com.gdomingues.androidapp.data.watchlist.WatchlistRepository
 import com.gdomingues.androidapp.domain.GetWatchlistUseCase
 import com.gdomingues.androidapp.domain.ToggleWatchlistUseCase
@@ -28,20 +27,11 @@ import java.time.LocalDate
 class WatchlistViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val repository: WatchlistRepository = mock()
     private val toggleUseCase: ToggleWatchlistUseCase = mock()
+    private val repository: WatchlistRepository = mock()
     private val getWatchlistUseCase: GetWatchlistUseCase = mock()
 
     private lateinit var viewModel: WatchlistViewModel
-
-    private val domainMovie = TrendingMovie(
-        id = 101,
-        title = "Inception",
-        overview = "A thief enters dreams",
-        backdropPath = "/inception.jpg",
-        voteAverage = 8.8,
-        releaseDate = LocalDate.of(2010, 7, 16)
-    )
 
     private val uiMovie = TrendingMovieUiModel(
         id = 101,
@@ -55,7 +45,7 @@ class WatchlistViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        whenever(getWatchlistUseCase()).thenReturn(flowOf(listOf(domainMovie)))
+        whenever(getWatchlistUseCase()).thenReturn(flowOf(listOf(uiMovie)))
         viewModel = WatchlistViewModel(getWatchlistUseCase, toggleUseCase, repository)
     }
 
@@ -63,7 +53,6 @@ class WatchlistViewModelTest {
     fun tearDown() {
         Dispatchers.resetMain()
     }
-
 
     @Test
     fun `isInWatchlist returns true if movie is in watchlist`() = runTest {
@@ -105,9 +94,9 @@ class WatchlistViewModelTest {
     }
 
     @Test
-    fun `watchlist emits value from use case`() = runTest {
+    fun `watchlist emits UI models from use case`() = runTest {
         // Given
-        val expected = listOf(domainMovie)
+        val expected = listOf(uiMovie)
 
         // When / Then
         viewModel.watchlist.test {
