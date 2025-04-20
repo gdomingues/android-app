@@ -6,6 +6,7 @@ import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.time.LocalDate
 import kotlin.test.assertEquals
 
 class TrendingMoviesRepositoryTest {
@@ -30,7 +31,7 @@ class TrendingMoviesRepositoryTest {
                     backdropPath = "/backdrop.jpg",
                     genreIds = listOf(28, 12),
                     popularity = 99.9,
-                    releaseDate = "2024-01-01",
+                    releaseDate = LocalDate.of(2024, 1, 1),
                     voteAverage = 8.5,
                     voteCount = 1000,
                     isAdult = false,

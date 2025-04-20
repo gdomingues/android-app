@@ -38,6 +38,7 @@ class GetTrendingMoviesUseCase @Inject constructor(
                     trendingMovie.overview,
                     fullBackdropPath,
                     trendingMovie.voteAverage,
+                    trendingMovie.releaseDate
                 )
             }
 

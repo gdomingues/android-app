@@ -5,6 +5,7 @@ import com.gdomingues.androidapp.ui.trending_movies.TrendingMovieUiModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -30,7 +31,8 @@ class SelectedMovieViewModelTest {
             title = "Test Movie",
             overview = "This is a test movie.",
             backdropPath = "/test.jpg",
-            voteAverage = 8.5
+            voteAverage = 8.5,
+            releaseDate = LocalDate.of(2024, 1, 1)
         )
 
         // When

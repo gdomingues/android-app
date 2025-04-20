@@ -33,6 +33,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        // Desugaring required for java.time and other Java8+ features on API < 26
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -44,6 +46,7 @@ android {
 
 dependencies {
     kapt(libs.dagger.hilt.compiler)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.androidx.benchmark.common)
     implementation(libs.androidx.core.ktx)

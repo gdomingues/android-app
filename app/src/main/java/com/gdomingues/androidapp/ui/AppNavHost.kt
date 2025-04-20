@@ -49,7 +49,10 @@ fun AppNavHost() {
             val sharedViewModel: SelectedMovieViewModel = hiltViewModel(parentEntry)
             val movie by sharedViewModel.selectedMovie.collectAsState()
 
-            MovieDetailScreen(movie = movie)
+            MovieDetailScreen(
+                movie = movie,
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 

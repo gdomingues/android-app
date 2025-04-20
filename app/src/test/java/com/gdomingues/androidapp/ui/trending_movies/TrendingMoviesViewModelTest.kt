@@ -13,6 +13,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
@@ -29,7 +30,8 @@ class TrendingMoviesViewModelTest {
             title = "Movie $it",
             overview = "Overview $it",
             backdropPath = "https://image.tmdb.org/t/p/w780/movie$it.jpg",
-            voteAverage = 7.0 + it
+            voteAverage = 7.0 + it,
+            releaseDate = LocalDate.of(2024, 1, 1)
         )
     }
 
@@ -39,7 +41,8 @@ class TrendingMoviesViewModelTest {
             title = "Movie $it",
             overview = "Overview $it",
             backdropPath = "https://image.tmdb.org/t/p/w780/movie$it.jpg",
-            voteAverage = 7.0 + it
+            voteAverage = 7.0 + it,
+            releaseDate = LocalDate.of(2024, 1, 1)
         )
     }
 

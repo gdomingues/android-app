@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import java.util.Locale
 
 @Composable
 fun TrendingMoviesScreen(
@@ -130,6 +131,8 @@ private fun TrendingMoviesList(
 
 @Composable
 fun TrendingMovieCard(movie: TrendingMovieUiModel, onMovieClick: (TrendingMovieUiModel) -> Unit) {
+    val voteFormatted = String.format(Locale.getDefault(), "%.1f/10", movie.voteAverage)
+
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -158,7 +161,7 @@ fun TrendingMovieCard(movie: TrendingMovieUiModel, onMovieClick: (TrendingMovieU
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = "★ ${movie.voteAverage}",
+                    text = "★ $voteFormatted",
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

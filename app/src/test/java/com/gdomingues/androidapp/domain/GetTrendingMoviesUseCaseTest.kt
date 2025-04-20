@@ -21,6 +21,7 @@ import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.time.LocalDate
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -62,7 +63,7 @@ class GetTrendingMoviesUseCaseTest {
             backdropPath = "/backdrop.jpg",
             genreIds = listOf(28),
             popularity = 99.9,
-            releaseDate = "2024-01-01",
+            releaseDate = LocalDate.of(2024, 1, 1),
             voteAverage = 8.7,
             voteCount = 1000,
             isAdult = false,
@@ -109,7 +110,8 @@ class GetTrendingMoviesUseCaseTest {
                     title = "Movie Title",
                     overview = "Overview",
                     backdropPath = mockUri.toString(),
-                    voteAverage = 8.7
+                    voteAverage = 8.7,
+                    releaseDate = LocalDate.of(2024, 1, 1)
                 )
             )
         )

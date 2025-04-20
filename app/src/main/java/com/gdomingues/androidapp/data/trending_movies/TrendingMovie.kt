@@ -1,5 +1,7 @@
 package com.gdomingues.androidapp.data.trending_movies
 
+import java.time.LocalDate
+
 data class TrendingMovie(
     val id: Int,
     val title: String,
@@ -9,7 +11,7 @@ data class TrendingMovie(
     val backdropPath: String,
     val genreIds: List<Int>,
     val popularity: Double,
-    val releaseDate: String,
+    val releaseDate: LocalDate?,
     val voteAverage: Double,
     val voteCount: Int,
     val isAdult: Boolean,

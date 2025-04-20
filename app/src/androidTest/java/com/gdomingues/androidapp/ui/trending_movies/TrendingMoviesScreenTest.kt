@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -24,7 +25,8 @@ class TrendingMoviesScreenTest {
             title = "Movie $it",
             overview = "Overview $it",
             backdropPath = "https://image.tmdb.org/t/p/original/ce3prrjh9ZehEl5JinNqr4jIeaB.jpg",
-            voteAverage = 7.0 + (it % 5)
+            voteAverage = 7.0 + (it % 5),
+            releaseDate = LocalDate.of(2024, 1, 1)
         )
     }
 

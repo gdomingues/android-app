@@ -1,5 +1,8 @@
 package com.gdomingues.androidapp.data.trending_movies
 
+import android.util.Log
+import java.time.LocalDate
+
 fun TrendingMoviesResponse.toDomain(): TrendingMovies {
     return TrendingMovies(
         page = page,
@@ -19,11 +22,20 @@ fun TrendingMovieResponse.toDomain(): TrendingMovie {
         backdropPath = backdropPath.orEmpty(),
         genreIds = genreIds,
         popularity = popularity,
-        releaseDate = releaseDate.orEmpty(),
+        releaseDate = releaseDate.toLocalDateOrNull(),
         voteAverage = voteAverage,
         voteCount = voteCount,
         isAdult = adult,
         isVideo = video,
         mediaType = mediaType.orEmpty()
     )
+}
+
+fun String?.toLocalDateOrNull(): LocalDate? {
+    return try {
+        this?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
+    } catch (e: Exception) {
+        Log.e("Data parsing", e.message.orEmpty())
+        null
+    }
 }
