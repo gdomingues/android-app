@@ -17,14 +17,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -36,6 +41,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrendingMoviesScreen(
     uiState: TrendingMoviesUiState,
@@ -43,14 +49,39 @@ fun TrendingMoviesScreen(
     onRetry: () -> Unit,
     onObserverListScroll: (LazyListState) -> Unit
 ) {
-    when (uiState) {
-        is TrendingMoviesUiState.Loading -> LoadingView()
-        is TrendingMoviesUiState.Error -> ErrorView(uiState, onRetry)
-        is TrendingMoviesUiState.Success -> TrendingMoviesList(
-            uiState,
-            onMovieClick,
-            onObserverListScroll
-        )
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val listState = rememberLazyListState()
+
+    // Notify ViewModel for pagination
+    LaunchedEffect(Unit) {
+        onObserverListScroll(listState)
+    }
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Trending Movies",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                scrollBehavior = scrollBehavior
+            )
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            when (uiState) {
+                is TrendingMoviesUiState.Loading -> LoadingView()
+                is TrendingMoviesUiState.Error -> ErrorView(uiState, onRetry)
+                is TrendingMoviesUiState.Success -> TrendingMoviesList(
+                    uiState = uiState,
+                    onMovieClick = onMovieClick,
+                    listState = listState
+                )
+            }
+        }
     }
 }
 
@@ -95,13 +126,8 @@ private fun ErrorView(
 private fun TrendingMoviesList(
     uiState: TrendingMoviesUiState.Success,
     onMovieClick: (TrendingMovieUiModel) -> Unit,
-    onObserverListScroll: (LazyListState) -> Unit,
+    listState: LazyListState,
 ) {
-    val listState = rememberLazyListState()
-    LaunchedEffect(Unit) {
-        onObserverListScroll(listState)
-    }
-
     LazyColumn(
         state = listState,
         modifier = Modifier

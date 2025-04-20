@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import com.gdomingues.androidapp.ui.AppNavHost
+import com.gdomingues.androidapp.ui.app.AppNavHost
 import com.gdomingues.androidapp.ui.theme.AndroidAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
