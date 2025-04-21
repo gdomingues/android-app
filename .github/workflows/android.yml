@@ -28,8 +28,14 @@ jobs:
           chmod +x ./gradlew
           chmod +x ./scripts/runCoverageReport.sh
 
-      - name: Run full coverage script
-        run: ./scripts/runCoverageReport.sh
+      - name: Start emulator and run coverage report
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          profile: pixel
+          script: ./scripts/runCoverageReport.sh
 
       - name: Upload merged coverage report
         uses: actions/upload-artifact@v4
