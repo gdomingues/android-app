@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.ksp)
+    id("jacoco")
 }
 
 android {
@@ -95,4 +96,45 @@ dependencies {
 
 kapt {
     correctErrorTypes = true
+}
+
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    val coverageSourceDirs = files(
+        "src/main/java",
+        "src/main/kotlin"
+    )
+
+    val classFiles = fileTree("${layout.buildDirectory.get().asFile}/tmp/kotlin-classes/debug") {
+        exclude(
+            "**/R.class",
+            "**/R\$*.class",
+            "**/BuildConfig.*",
+            "**/Manifest*.*",
+            "**/*Test*.*"
+        )
+    }
+
+    val executionDataFile =
+        file("${layout.buildDirectory.get().asFile}/jacoco/testDebugUnitTest.exec")
+
+    classDirectories.setFrom(classFiles)
+    sourceDirectories.setFrom(coverageSourceDirs)
+    executionData.setFrom(executionDataFile)
+
+    doFirst {
+        if (!executionDataFile.exists()) {
+            throw GradleException("Jacoco exec file not found. Run tests first.")
+        }
+    }
+}
+
+tasks.withType<Test> {
+    finalizedBy("jacocoTestReport")
 }
