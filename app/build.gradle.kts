@@ -21,12 +21,19 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["coverage"] = "true"
+        testInstrumentationRunnerArguments["coverageFile"] =
+            "/data/data/${applicationId}/files/coverage.ec"
 
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments["room.schemaLocation"] = "$projectDir/schemas"
             }
         }
+    }
+
+    testOptions {
+        execution = "HOST" // disable orchestrator
     }
 
     buildTypes {
@@ -36,6 +43,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            enableAndroidTestCoverage = project.hasProperty("coverage")
         }
     }
     compileOptions {
@@ -112,35 +122,36 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         html.required.set(true)
     }
 
-    val coverageSourceDirs = files(
-        "src/main/java",
-        "src/main/kotlin"
+    val outputDir = layout.buildDirectory.get().asFile
+
+    classDirectories.setFrom(
+        files(
+            fileTree("${outputDir}/tmp/kotlin-classes/debug") {
+                exclude(
+                    "**/R.class",
+                    "**/R\$*.class",
+                    "**/BuildConfig.*",
+                    "**/Manifest*.*",
+                    "**/*Test*.*"
+                )
+            },
+            fileTree("${outputDir}/intermediates/javac/debug") {
+                exclude(
+                    "**/R.class",
+                    "**/R\$*.class",
+                    "**/BuildConfig.*",
+                    "**/Manifest*.*",
+                    "**/*Test*.*"
+                )
+            }
+        )
     )
 
-    val classFiles = fileTree("${layout.buildDirectory.get().asFile}/tmp/kotlin-classes/debug") {
-        exclude(
-            "**/R.class",
-            "**/R\$*.class",
-            "**/BuildConfig.*",
-            "**/Manifest*.*",
-            "**/*Test*.*"
+    sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
+    executionData.setFrom(
+        files(
+            file("${outputDir}/jacoco/testDebugUnitTest.exec"),
+            file("${outputDir}/outputs/code-coverage/connected/coverage.ec")
         )
-    }
-
-    val executionDataFile =
-        file("${layout.buildDirectory.get().asFile}/jacoco/testDebugUnitTest.exec")
-
-    classDirectories.setFrom(classFiles)
-    sourceDirectories.setFrom(coverageSourceDirs)
-    executionData.setFrom(executionDataFile)
-
-    doFirst {
-        if (!executionDataFile.exists()) {
-            throw GradleException("Jacoco exec file not found. Run tests first.")
-        }
-    }
-}
-
-tasks.withType<Test> {
-    finalizedBy("jacocoTestReport")
+    )
 }
