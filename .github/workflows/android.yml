@@ -31,9 +31,9 @@ jobs:
       - name: Start emulator and run coverage report
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
-          target: google_apis
-          arch: x86_64
+          api-level: 29
+          target: default
+          arch: x86
           profile: pixel
           script: ./scripts/runCoverageReport.sh
 
