@@ -13,11 +13,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.gdomingues.androidapp.ui.movie_detail.MovieDetailScreen
-import com.gdomingues.androidapp.ui.movie_detail.WatchlistViewModel
 import com.gdomingues.androidapp.ui.selected_movie.SelectedMovieViewModel
 import com.gdomingues.androidapp.ui.trending_movies.TrendingMoviesScreen
 import com.gdomingues.androidapp.ui.trending_movies.TrendingMoviesViewModel
 import com.gdomingues.androidapp.ui.watchlist.WatchlistScreen
+import com.gdomingues.androidapp.ui.watchlist.WatchlistViewModelImpl
 
 @Composable
 fun AppNavHost() {
@@ -77,10 +77,12 @@ fun AppNavHost() {
                 }
 
                 val sharedViewModel: SelectedMovieViewModel = hiltViewModel(parentEntry)
+                val watchlistViewModel: WatchlistViewModelImpl = hiltViewModel()
                 val movie by sharedViewModel.selectedMovie.collectAsState()
 
                 MovieDetailScreen(
                     movie = movie,
+                    watchlistViewModel,
                     onBack = { navController.popBackStack() }
                 )
             }
@@ -90,7 +92,7 @@ fun AppNavHost() {
                     navController.getBackStackEntry("root")
                 }
 
-                val viewModel: WatchlistViewModel = hiltViewModel()
+                val viewModel: WatchlistViewModelImpl = hiltViewModel()
                 val movies by viewModel.watchlist.collectAsState()
                 val sharedViewModel: SelectedMovieViewModel = hiltViewModel(parentEntry)
 

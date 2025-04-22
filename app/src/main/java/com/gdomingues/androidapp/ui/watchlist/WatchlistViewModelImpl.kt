@@ -1,6 +1,5 @@
-package com.gdomingues.androidapp.ui.movie_detail
+package com.gdomingues.androidapp.ui.watchlist
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gdomingues.androidapp.data.watchlist.WatchlistRepository
 import com.gdomingues.androidapp.domain.GetWatchlistUseCase
@@ -13,20 +12,20 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class WatchlistViewModel @Inject constructor(
+class WatchlistViewModelImpl @Inject constructor(
     getWatchlist: GetWatchlistUseCase,
     private val toggleWatchlist: ToggleWatchlistUseCase,
     private val repository: WatchlistRepository
-) : ViewModel() {
+) : WatchlistViewModel() {
 
-    val watchlist: StateFlow<List<TrendingMovieUiModel>> = getWatchlist()
+    override val watchlist: StateFlow<List<TrendingMovieUiModel>> = getWatchlist()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    suspend fun isInWatchlist(movieId: Int): Boolean {
+    override suspend fun isInWatchlist(movieId: Int): Boolean {
         return repository.isInWatchlist(movieId)
     }
 
-    suspend fun toggle(movie: TrendingMovieUiModel): Boolean {
+    override suspend fun toggle(movie: TrendingMovieUiModel): Boolean {
         return toggleWatchlist(movie)
     }
 }

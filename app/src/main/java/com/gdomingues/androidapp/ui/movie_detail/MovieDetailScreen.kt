@@ -32,19 +32,23 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.gdomingues.androidapp.ui.trending_movies.TrendingMovieUiModel
+import com.gdomingues.androidapp.ui.watchlist.WatchlistViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
-fun MovieDetailScreen(movie: TrendingMovieUiModel?, onBack: () -> Unit = {}) {
+fun MovieDetailScreen(
+    movie: TrendingMovieUiModel?,
+    viewModel: WatchlistViewModel,
+    onBack: () -> Unit = {}
+) {
     if (movie == null) {
         EmptyMovieDetailScreen()
     } else {
-        val viewModel: WatchlistViewModel = hiltViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
         val coroutineScope = rememberCoroutineScope()
         val isInWatchlist = remember { mutableStateOf(false) }
@@ -96,81 +100,107 @@ private fun DefaultMovieDetailScreen(
 
     LazyColumn(modifier = modifier.fillMaxSize()) {
         item {
-            Box {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(movie.backdropPath)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "${movie.title} backdrop",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(240.dp),
-                    contentScale = ContentScale.Crop
-                )
+            MovieDetailHeader(movie, onBack)
+        }
+        item {
+            MovieDetailContent(
+                movie,
+                voteFormatted,
+                releaseYear,
+                scope,
+                onToggleWatchlist,
+                isInWatchlist
+            )
+        }
+    }
+}
 
-                IconButton(
-                    onClick = onBack,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.TopStart)
-                        .background(
-                            color = Color.Black.copy(alpha = 0.6f),
-                            shape = MaterialTheme.shapes.small
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-            }
+@Composable
+fun MovieDetailHeader(
+    movie: TrendingMovieUiModel,
+    onBack: () -> Unit
+) {
+    Box {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(movie.backdropPath)
+                .crossfade(true)
+                .build(),
+            contentDescription = "${movie.title} backdrop",
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(240.dp),
+            contentScale = ContentScale.Crop
+        )
+
+        IconButton(
+            onClick = onBack,
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.TopStart)
+                .background(
+                    color = Color.Black.copy(alpha = 0.6f),
+                    shape = MaterialTheme.shapes.small
+                )
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White
+            )
+        }
+    }
+}
+
+@Composable
+fun MovieDetailContent(
+    movie: TrendingMovieUiModel,
+    voteFormatted: String,
+    releaseYear: String,
+    scope: CoroutineScope,
+    onToggleWatchlist: () -> Unit,
+    isInWatchlist: Boolean
+) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = movie.title,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            Text(
+                text = "★ $voteFormatted",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = releaseYear,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray
+            )
         }
 
-        item {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = movie.title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
-                )
+        Text(
+            text = movie.overview,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                ) {
-                    Text(
-                        text = "★ $voteFormatted",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = releaseYear,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray
-                    )
-                }
-
-                Text(
-                    text = movie.overview,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(bottom = 24.dp)
-                )
-
-                Button(
-                    onClick = {
-                        scope.launch { onToggleWatchlist() }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = if (isInWatchlist) "Remove from Watchlist" else "Add to Watchlist",
-                    )
-                }
-            }
+        Button(
+            onClick = {
+                scope.launch { onToggleWatchlist() }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = if (isInWatchlist) "Remove from Watchlist" else "Add to Watchlist",
+            )
         }
     }
 }

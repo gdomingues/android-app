@@ -20,7 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.gdomingues.androidapp.HiltTestRunner"
         testInstrumentationRunnerArguments["coverage"] = "true"
         testInstrumentationRunnerArguments["coverageFile"] =
             "/data/data/${applicationId}/files/coverage.ec"
@@ -103,6 +103,8 @@ dependencies {
     androidTestImplementation(libs.androidx.rules)
     androidTestImplementation(libs.androidx.runner)
     androidTestImplementation(libs.androidx.orchestrator)
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.dagger.hilt.compiler)
     androidTestImplementation(kotlin("test"))
 
     debugImplementation(libs.core)
