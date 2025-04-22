@@ -17,7 +17,7 @@ echo "📱 Running instrumentation tests with coverage enabled..."
 adb shell am instrument -w \
   -e coverage true \
   -e coverageFile "/data/data/$APP_ID/files/$COVERAGE_FILE" \
-  "$APP_ID.test/androidx.test.runner.AndroidJUnitRunner"
+  "$APP_ID.test/com.gdomingues.androidapp.HiltTestRunner"
 
 echo "📥 Attempting to pull coverage file via run-as..."
 mkdir -p "$(dirname "$LOCAL_COVERAGE_PATH")"

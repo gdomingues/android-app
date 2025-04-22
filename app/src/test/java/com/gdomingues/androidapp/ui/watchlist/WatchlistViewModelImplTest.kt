@@ -1,4 +1,4 @@
-package com.gdomingues.androidapp.ui.movie_detail
+package com.gdomingues.androidapp.ui.watchlist
 
 import app.cash.turbine.test
 import com.gdomingues.androidapp.data.watchlist.WatchlistRepository
@@ -24,7 +24,7 @@ import org.mockito.kotlin.whenever
 import java.time.LocalDate
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class WatchlistViewModelTest {
+class WatchlistViewModelImplTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val toggleUseCase: ToggleWatchlistUseCase = mock()
@@ -46,7 +46,7 @@ class WatchlistViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         whenever(getWatchlistUseCase()).thenReturn(flowOf(listOf(uiMovie)))
-        viewModel = WatchlistViewModel(getWatchlistUseCase, toggleUseCase, repository)
+        viewModel = WatchlistViewModelImpl(getWatchlistUseCase, toggleUseCase, repository)
     }
 
     @After
