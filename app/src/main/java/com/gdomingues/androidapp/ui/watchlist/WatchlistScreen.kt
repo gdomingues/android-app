@@ -62,7 +62,6 @@ fun WatchlistScreen(
         Box(
             modifier = Modifier
                 .padding(innerPadding)
-//                .fillMaxSize()
         ) {
             if (movies.isEmpty()) {
                 EmptyWatchlistView()
